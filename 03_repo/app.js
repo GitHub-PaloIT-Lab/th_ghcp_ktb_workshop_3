@@ -1,17 +1,12 @@
 const express = require('express');
-const mysql = require('mysql2');
 const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(express.json());
 
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'admin123',
-  database: process.env.DB_NAME || 'ecommerce'
-});
-
+// Commented out endpoints that require database
+/*
 app.get('/api/users/:id', (req, res) => {
   const userId = req.params.id;
   const query = `SELECT * FROM users WHERE id = ${userId}`;
@@ -36,13 +31,27 @@ app.post('/api/products', (req, res) => {
     res.json({ id: results.insertId, message: 'Product created' });
   });
 });
+*/
 
 app.get('/api/files/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filePath = `./uploads/${filename}`;
+  
+  // Path traversal protection
+  if (!filename || filename.includes('../') || filename.includes('..\\') || path.isAbsolute(filename)) {
+    return res.status(400).json({ error: 'Invalid filename' });
+  }
+  
+  // Resolve paths to prevent traversal
+  const uploadsDir = path.resolve('./uploads');
+  const requestedPath = path.resolve(uploadsDir, filename);
+  
+  // Ensure the resolved path is within uploads directory
+  if (!requestedPath.startsWith(uploadsDir + path.sep) && requestedPath !== uploadsDir) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
   
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = fs.readFileSync(requestedPath, 'utf8');
     res.send(content);
   } catch (error) {
     res.status(404).json({ error: 'File not found' });

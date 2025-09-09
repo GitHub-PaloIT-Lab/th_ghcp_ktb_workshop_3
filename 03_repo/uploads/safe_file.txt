@@ -1,0 +1,2 @@
+This is a safe file in uploads directory
+It should be accessible via the API

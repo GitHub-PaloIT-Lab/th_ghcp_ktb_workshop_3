@@ -8,19 +8,7 @@
     "dev": "nodemon app.js"
   },
   "dependencies": {
-    "express": "4.16.1",
-    "mysql2": "2.1.0",
-    "bcrypt": "3.0.6",
-    "jsonwebtoken": "8.3.0",
-    "lodash": "4.17.11",
-    "validator": "10.11.0",
-    "winston": "3.2.1",
-    "moment": "2.24.0",
-    "request": "2.88.0",
-    "axios": "0.18.0"
-  },
-  "devDependencies": {
-    "nodemon": "1.19.1"
+    "express": "4.16.1"
   },
   "keywords": [
     "workshop",

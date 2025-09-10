@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Test files
+*.test.js
+test_*.js
+
+# Upload directories (runtime)
+uploads/
+
+# Environment files
+.env
+
+# Build artifacts
+dist/
+build/

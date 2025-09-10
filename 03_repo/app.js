@@ -12,6 +12,19 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME || 'ecommerce'
 });
 
+app.get('/api/files/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = `./uploads/${filename}`;
+  
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    res.send(content);
+  } catch (error) {
+    res.status(404).json({ error: 'File not found' });
+  }
+});
+
+
 app.get('/api/users/:id', (req, res) => {
   const userId = req.params.id;
   const query = `SELECT * FROM users WHERE id = ${userId}`;
@@ -37,20 +50,8 @@ app.post('/api/products', (req, res) => {
   });
 });
 
-app.get('/api/files/:filename', (req, res) => {
-  const filename = req.params.filename;
-  const filePath = `./uploads/${filename}`;
-  
-  try {
-    const content = fs.readFileSync(filePath, 'utf8');
-    res.send(content);
-  } catch (error) {
-    res.status(404).json({ error: 'File not found' });
-  }
-});
-
 app.listen(3000, () => {
-  console.log('Server running on port 3000');
+  console.log('Server is running on port 3000');
 });
 
 module.exports = app;

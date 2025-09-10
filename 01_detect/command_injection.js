@@ -2,6 +2,7 @@ const { exec } = require('child_process');
 
 function processUserFile(filename) {
   const command = `grep "error" /var/log/${filename}.log`;
+  //
   
   exec(command, (error, stdout, stderr) => {
     if (error) {
@@ -13,6 +14,7 @@ function processUserFile(filename) {
 }
 
 function convertImageFile(inputFile, outputFormat) {
+
   const convertCommand = `convert ${inputFile} output.${outputFormat}`;
   
   exec(convertCommand, (error, stdout, stderr) => {

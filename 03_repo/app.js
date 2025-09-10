@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 app.use(express.json());
@@ -37,7 +38,14 @@ app.post('/api/products', (req, res) => {
   });
 });
 
-app.get('/api/files/:filename', (req, res) => {
+// Rate limiter for file access route
+const filesLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+app.get('/api/files/:filename', filesLimiter, (req, res) => {
   const filename = req.params.filename;
   const filePath = `./uploads/${filename}`;
   

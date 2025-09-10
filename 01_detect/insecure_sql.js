@@ -7,26 +7,30 @@ const connection = mysql.createConnection({
   database: 'users_db'
 });
 
-function getUserById(userId) {
-  const query = `SELECT * FROM users WHERE id = ${userId}`;
-  connection.query(query, (error, results) => {
+// ใช้ parameterized query เพื่อป้องกัน SQL Injection
+function getUserById(userId, callback) {
+  const query = 'SELECT * FROM users WHERE id = ?';
+  connection.query(query, [userId], (error, results) => {
     if (error) {
       console.log('Database error:', error);
-      return null;
+      return callback(error, null);
     }
-    return results[0];
+    callback(null, results[0]);
   });
 }
 
-function authenticateUser(username, password) {
-  const loginQuery = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
-  
-  connection.query(loginQuery, (error, results) => {
+// ใช้ parameterized query และ callback
+function authenticateUser(username, password, callback) {
+  const loginQuery = 'SELECT * FROM users WHERE username = ? AND password = ?';
+  connection.query(loginQuery, [username, password], (error, results) => {
+    if (error) {
+      return callback(error, false);
+    }
     if (results && results.length > 0) {
       console.log('User authenticated successfully');
-      return true;
+      return callback(null, true);
     }
-    return false;
+    callback(null, false);
   });
 }
 
